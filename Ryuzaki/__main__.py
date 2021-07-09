@@ -74,23 +74,40 @@ def get_readable_time(seconds: int) -> str:
 
 
 PM_START_TEXT = """
-`Heya` 🤗 `I am` *Ryuzaki* `your group super bot`
-`I am very fast and  more efficient  I provide awesome  features which a owner will look for  filter ,warn system,note keeping system flood!`
+✨ Hi I'm Ryuzaki,
+I am an Anime themed group management bot. I am also working in kira investigation ;)
+
+I can do a various of things, with my detective skills:
+- Restrict users with ban permissions.
+- Greet users with media + text and buttons, with proper formatting.
+- Restrict users who flood your chat using my anti-flood module.
+- Warn users according to the options set and restrict em accordingly.
+- Save notes and filters with proper formatting and reply markup.
+
+Theres even more! this is just the tip of the mountain. Do note I need
+to be promoted with proper admin permissions to function properly. 
+Else I won't be able to function as said.
+
+Click on help to learn more!
 """
 
 buttons = [
     [
         InlineKeyboardButton(
-            text="Add To Your Group 👥", url="t.me/Ryuzakibot?startgroup=true"),
+            text="Add Ryuzaki", url="t.me/Ryuzakibot?startgroup=true"),
+        InlineKeyboardButton(
+            text="Try Inline", url=f"https://t.me/RyuzakiSupportChat/10"
+        ),
+
     ],
     [
-        InlineKeyboardButton(text="About 📋", callback_data="Ryuzakibot_"),
+        InlineKeyboardButton(text="Support", url=f"https://t.me/RyuzakiSupportChat"),
         InlineKeyboardButton(
-            text="Support 🛠️", url=f"https://t.me/{SUPPORT_CHAT}"
+            text="Updates", url=f"https://RyuzakiNews"
         ),
     ],
     [
-        InlineKeyboardButton(text="Help & Commands ❔", callback_data="help_back"),
+        InlineKeyboardButton(text="Help", callback_data="help_back"),
     ],
 ]
 
