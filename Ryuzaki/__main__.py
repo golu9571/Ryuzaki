@@ -95,15 +95,11 @@ buttons = [
     [
         InlineKeyboardButton(
             text="Add Ryuzaki", url="t.me/Ryuzakibot?startgroup=true"),
-        InlineKeyboardButton(
-            text="Try Inline", url=f"https://t.me/RyuzakiSupportChat/10"
-        ),
-
     ],
     [
-        InlineKeyboardButton(text="Support", url=f"https://t.me/RyuzakiSupportChat"),
+        InlineKeyboardButton(text="Support", url="https://t.me/RyuzakiSupportChat"),
         InlineKeyboardButton(
-            text="Updates", url=f"https://RyuzakiNews"
+            text="Updates", url=f"https://t.me/RyuzakiNews"
         ),
     ],
     [
