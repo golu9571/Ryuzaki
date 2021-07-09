@@ -74,21 +74,19 @@ def get_readable_time(seconds: int) -> str:
 
 
 PM_START_TEXT = """
-✨ Hi I'm **Ryuzaki**,
+✨ Hi I'm *Ryuzaki*,
 I am an Anime themed group management bot. I am also working in kira investigation ;)
 
-**I can do a various of things, with my detective skills**:
-- **Restrict** users with ban permissions.
-- **Greet** users with media + text and buttons, with proper formatting.
-- Restrict users who flood your chat using my **anti-flood** module.
-- **Warn** users according to the options set and restrict em accordingly.
-- **Save notes** and filters with proper formatting and reply markup.
+*I can do a various of things, with my detective skills*:
+- *Restrict* users with ban permissions.
+- *Greet* users with media + text and buttons, with proper formatting.
+- Restrict users who flood your chat using my *anti-flood* module.
+- *Warn* users according to the options set and restrict em accordingly.
+- *Save notes* and filters with proper formatting and reply markup.
 
-Theres even more! this is just the tip of the mountain. **Do note I need
-to be promoted with proper admin permissions to function properly.**
+Theres even more! this is just the tip of the mountain. *Do note I need
+to be promoted with proper admin permissions to function properly.*
 Else I won't be able to function as said.
-
-If any issues ask my [Master](https://t.me/EvilBinner)!
 
 **Click on help to learn more!**
 """
@@ -115,12 +113,18 @@ buttons = [
 
 HELP_STRINGS = """
 *SETTINGS*
-`Click on the buttons below to get documentation about specific modules..`
+Here is the list of *all possible commands*:
+- /start: Starts me! You've probably already used this.
+- /help: Sends this message; I'll tell you more about myself!
+- /donate: Gives you info on how to support me and my creator.
+
+If you have any bugs or questions on how to use me head to @TheRyuzakiBot.
+*All commands can be used with the following: / ? !*
 """
 
 
 DONATE_STRING = """Heya, glad to hear you want to donate!
- You can support the project via [Paypal](#) or by contacting @SelfisXD \
+ You can support the project via [Paypal](#) or by contacting @EvilBinner\
  Supporting isnt always financial! \
  Those who cannot provide monetary support are welcome to help us develop the bot at ."""
 
