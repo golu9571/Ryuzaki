@@ -109,7 +109,6 @@ buttons = [
 
 
 HELP_STRINGS = """
-*SETTINGS*
 Here is the list of *all possible commands*:
 - /start: Starts me! You've probably already used this.
 - /help: Sends this message; I'll tell you more about myself!
