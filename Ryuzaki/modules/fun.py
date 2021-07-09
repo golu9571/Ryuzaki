@@ -323,6 +323,7 @@ def weebify(update: Update, context: CallbackContext):
     else:
         message.reply_text(string)
 
+__mod_name_ = "Memes"
 
 __help__ = """
  • /runs*:* reply a random string from an array of replies
