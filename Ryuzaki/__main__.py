@@ -74,27 +74,29 @@ def get_readable_time(seconds: int) -> str:
 
 
 PM_START_TEXT = """
-✨ Hi I'm Ryuzaki,
+✨ Hi I'm **Ryuzaki**,
 I am an Anime themed group management bot. I am also working in kira investigation ;)
 
-I can do a various of things, with my detective skills:
-- Restrict users with ban permissions.
-- Greet users with media + text and buttons, with proper formatting.
-- Restrict users who flood your chat using my anti-flood module.
-- Warn users according to the options set and restrict em accordingly.
-- Save notes and filters with proper formatting and reply markup.
+**I can do a various of things, with my detective skills**:
+- **Restrict** users with ban permissions.
+- **Greet** users with media + text and buttons, with proper formatting.
+- Restrict users who flood your chat using my **anti-flood** module.
+- **Warn** users according to the options set and restrict em accordingly.
+- **Save notes** and filters with proper formatting and reply markup.
 
-Theres even more! this is just the tip of the mountain. Do note I need
-to be promoted with proper admin permissions to function properly. 
+Theres even more! this is just the tip of the mountain. **Do note I need
+to be promoted with proper admin permissions to function properly.**
 Else I won't be able to function as said.
 
-Click on help to learn more!
+If any issues ask my [Master](https://t.me/EvilBinner)!
+
+**Click on help to learn more!**
 """
 
 buttons = [
     [
         InlineKeyboardButton(
-            text="Add Ryuzaki", url="t.me/Ryuzakibot?startgroup=true"),
+            text="Add Ryuzaki", url="http://t.me/Ryuzakibot?startgroup=true"),
     ],
     [
         InlineKeyboardButton(text="Support", url="https://t.me/RyuzakiSupportChat"),
@@ -104,6 +106,9 @@ buttons = [
     ],
     [
         InlineKeyboardButton(text="Help", callback_data="help_back"),
+       InlineKeyboardButton(
+            text="Source", url=f"https://t.me/DopeBotz/Ryuzaki"
+        ),
     ],
 ]
 
