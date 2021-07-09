@@ -86,7 +86,9 @@ __help__ = """
 *Markdown:*
  • /markdownhelp*:* quick summary of how markdown works in telegram - can only be called in private chats
 *Languages:*
- • /json *:* get message details in json form data
+ • /json *:* get message details in json form data.
+ • /eval *:* Run Code.
+ • /py *:* Run Python Code.
 *React:*
  • /react*:* Reacts with a random reaction 
 *Urban Dictonary:*
