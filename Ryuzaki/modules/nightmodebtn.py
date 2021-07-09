@@ -1,3 +1,4 @@
+__mod_name__ = "SpamWatcher"
 __help__ = f"""
  • /nightmode on/off
  
