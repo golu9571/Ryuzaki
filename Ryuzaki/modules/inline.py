@@ -20,7 +20,7 @@ from telegram.ext import InlineQueryHandler, CallbackContext
 from telegram.utils.helpers import mention_html
 
 import Ryuzaki.modules.sql.users_sql as sql
-from Ryuzaki import (
+from telegram import (
     dispatcher,
     OWNER_ID,
     SUDO_USERS,
