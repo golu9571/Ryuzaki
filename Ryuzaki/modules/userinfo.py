@@ -7,7 +7,7 @@ from telegram.ext.dispatcher import run_async
 from telegram.utils.helpers import escape_markdown
 
 import Ryuzaki.modules.sql.userinfo_sql as sql
-from Ryuzaki import dispatcher, SUDO_USERS
+from Ryuzaki import dispatcher, DEV_USERS
 from Ryuzaki.modules.disable import DisableAbleCommandHandler
 from Ryuzaki.modules.helper_funcs.extraction import extract_user
 
@@ -81,7 +81,7 @@ def set_about_bio(bot: Bot, update: Update):
         if user_id == message.from_user.id:
             message.reply_text("Ha, you can't set your own bio! You're at the mercy of others here...")
             return
-        elif user_id == bot.id and sender.id not in SUDO_USERS:
+        elif user_id == bot.id and sender.id not in DEV_USERS:
             message.reply_text("Erm... yeah, I only trust sudo users to set my bio.")
             return
 
