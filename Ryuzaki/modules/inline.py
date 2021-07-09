@@ -6,8 +6,6 @@ from typing import List
 from uuid import uuid4
 
 import requests
-from spamprotection.errors import HostDownError
-from spamprotection.sync import SPBClient
 from telegram import (
     InlineQueryResultArticle,
     ParseMode,
@@ -53,14 +51,6 @@ def inlinequery(update: Update, _) -> None:
 
     results: List = []
     inline_help_dicts = [
-        {
-            "title": "SpamProtection INFO",
-            "description": "Look up a person/bot/channel/chat on @Intellivoid SpamProtection API",
-            "message_text": "Click the button below to look up a person/bot/channel/chat on @Intellivoid SpamProtection API using "
-            "username or telegram id",
-            "thumb_urL": "https://telegra.ph/file/3ce9045b1c7faf7123c67.jpg",
-            "keyboard": ".spb ",
-        },
         {
             "title": "Account info on Yuii",
             "description": "Look up a Telegram account in Yuii database",
@@ -255,132 +245,6 @@ def about(query: str, update: Update, context: CallbackContext) -> None:
     )
     update.inline_query.answer(results)
 
-
-def spb(query: str, update: Update, context: CallbackContext) -> None:
-    """Handle the inline query."""
-    query = update.inline_query.query
-    user_id = update.effective_user.id
-    srdata = None
-    apst = requests.get(
-        f"https://api.intellivoid.net/spamprotection/v1/lookup?query={context.bot.username}"
-    )
-    api_status = apst.status_code
-    if api_status != 200:
-        stats = f"API RETURNED {api_status}"
-    else:
-        try:
-            search = query.split(" ", 1)[1]
-        except IndexError:
-            search = user_id
-
-        if search:
-            srdata = search
-        else:
-            srdata = user_id
-
-        url = f"https://api.intellivoid.net/spamprotection/v1/lookup?query={srdata}"
-        r = requests.get(url)
-        a = r.json()
-        response = a["success"]
-        if response is True:
-            date = a["results"]["last_updated"]
-            stats = f"*◢ Intellivoid• SpamProtection Info*:\n"
-            stats += f' • *Updated on*: `{datetime.fromtimestamp(date).strftime("%Y-%m-%d %I:%M:%S %p")}`\n'
-
-            if a["results"]["attributes"]["is_potential_spammer"] is True:
-                stats += f" • *User*: `USERxSPAM`\n"
-            elif a["results"]["attributes"]["is_operator"] is True:
-                stats += f" • *User*: `USERxOPERATOR`\n"
-            elif a["results"]["attributes"]["is_agent"] is True:
-                stats += f" • *User*: `USERxAGENT`\n"
-            elif a["results"]["attributes"]["is_whitelisted"] is True:
-                stats += f" • *User*: `USERxWHITELISTED`\n"
-
-            stats += f' • *Type*: `{a["results"]["entity_type"]}`\n'
-            stats += (
-                f' • *Language*: `{a["results"]["language_prediction"]["language"]}`\n'
-            )
-            stats += f' • *Language Probability*: `{a["results"]["language_prediction"]["probability"]}`\n'
-            stats += f"*Spam Prediction*:\n"
-            stats += f' • *Ham Prediction*: `{a["results"]["spam_prediction"]["ham_prediction"]}`\n'
-            stats += f' • *Spam Prediction*: `{a["results"]["spam_prediction"]["spam_prediction"]}`\n'
-            stats += (
-                f'*Blacklisted*: `{a["results"]["attributes"]["is_blacklisted"]}`\n'
-            )
-            if a["results"]["attributes"]["is_blacklisted"] is True:
-                stats += (
-                    f' • *Reason*: `{a["results"]["attributes"]["blacklist_reason"]}`\n'
-                )
-                stats += (
-                    f' • *Flag*: `{a["results"]["attributes"]["blacklist_flag"]}`\n'
-                )
-            stats += f'*PTID*:\n`{a["results"]["private_telegram_id"]}`\n'
-
-        else:
-            stats = "`cannot reach SpamProtection API`"
-
-    kb = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton(
-                    text="Report Error",
-                    url=f"https://t.me/yuiichansupport",
-                ),
-                InlineKeyboardButton(
-                    text="Search again",
-                    switch_inline_query_current_chat=".spb ",
-                ),
-            ],
-        ]
-    )
-
-    a = "the entity was not found"
-    results = [
-        InlineQueryResultArticle(
-            id=str(uuid4()),
-            title=f"SpamProtection API info of {srdata or a}",
-            input_message_content=InputTextMessageContent(
-                stats, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True
-            ),
-            reply_markup=kb,
-        ),
-    ]
-
-    update.inline_query.answer(results, cache_time=5)
-
-
-MEDIA_QUERY = """query ($search: String) {
-  Page (perPage: 10) {
-    media (search: $search) {
-      id
-      title {
-        romaji
-        english
-        native
-      }
-      type
-      format
-      status
-      description
-      episodes
-      bannerImage
-      duration
-      chapters
-      volumes
-      genres
-      synonyms
-      averageScore
-      airingSchedule(notYetAired: true) {
-        nodes {
-          airingAt
-          timeUntilAiring
-          episode
-        }
-      }
-      siteUrl
-    }
-  }
-}"""
 
 
 def media_query(query: str, update: Update, context: CallbackContext) -> None:
