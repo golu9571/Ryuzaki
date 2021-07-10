@@ -21,7 +21,7 @@ async def _(event):
      await event.edit(AB_TXT, buttons=[
      [Button.inline("T&C", data="tc"), Button.inline("System", data="sys")],
      [Button.inline("About Me", data="ab")],
-     [Button.inline("Back", data="RyuzakiBot_back")]])
+     [Button.inline("Back", data="Ryuzakibot_back")]])
 
 #T&C
 
@@ -63,4 +63,22 @@ async def _(event):
 
      await event.edit(SYS_TXT, buttons=[[Button.inline("Back", data="about_me")]])
 
+AB_TR = """
+**I am Ryuzaki, a python based Telegram Group Management bot
 
+Currently I'm managing 5+ chats
+
+My developers:
+• @EvilBinner
+• @Madboi_xD
+
+Thanks to My Sudo & Support users who makes me usable for you!
+
+Updates channel: @RyuzakiNews
+support chat: @RyuzakiUpdates**
+"""
+
+@telethn.on(events.callbackquery.CallbackQuery(data="ab"))
+async def _(event):
+
+     await event.edit(AB_TR, buttons=[[Button.inline("Back", data="about_me")]])
