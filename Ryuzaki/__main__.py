@@ -81,9 +81,7 @@ I am an Anime themed group management bot. I am also working in kira investigati
 *I can make your group management fun and easy with
 my detective skill.*
 
-*Just click the button below to add me! Do note I need
-to be promoted with proper admin permissions to function properly.
-Else I won't be able to function.*
+*Just click the button below to add me!*
 
 Click on *Help Menu*/*Basic Help* to learn more!
 """
