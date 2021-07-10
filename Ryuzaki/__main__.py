@@ -74,21 +74,22 @@ def get_readable_time(seconds: int) -> str:
 
 
 PM_START_TEXT = """
-Heya! My name is **Ryuzaki**
-I am anime themed group management bot with **detective skills**:)
+Heya! My name is *Ryuzaki*
+I am an Anime themed group management bot. I am also working in kira investigation ;) 
  
-**I can make your group management fun and easy with my detective skill.**
+*I can make your group management fun and easy with my detective skill.*
+
 Note : I Need Proper Admin Rights To Manage Group As Fuck! 
 ==========================
-✨ **Updates Channel**
+✨ *Updates Channel*
 - @RyuzakiNews
 
-✨ **Support Group**
+✨ *Support Group*
 - @RyuzakiSupportChat
 
 Wanna Add me to your Group? Just click the button below!
 
-**Click on **Help Menu** to learn more!**
+Click on *Help Menu* to learn more!*
 """
 
 buttons = [
