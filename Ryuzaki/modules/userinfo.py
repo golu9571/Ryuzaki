@@ -1,213 +1,217 @@
 import html
-import re
-import os
+import json
+import random
+from datetime import datetime
+from typing import Optional, List
+
 import requests
-
-from telethon.tl.functions.channels import GetFullChannelRequest
-from telethon.tl.types import ChannelParticipantsAdmins
-from telethon import events
-
-from telegram import MAX_MESSAGE_LENGTH, ParseMode, Update, MessageEntity
-from telegram.ext import CallbackContext, CommandHandler
-from telegram.ext.dispatcher import run_async
-from telegram.error import BadRequest
+from telegram import Message, Chat, Update, Bot, MessageEntity
+from telegram import ParseMode
+from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 
-from Ryuzaki import (
-    DEV_USERS,
-    OWNER_ID,
-    DRAGONS,
-    DEMONS,
-    TIGERS,
-    WOLVES,
-    INFOPIC,
-    dispatcher,
-    sw,
-)
-from Ryuzaki.__main__ import STATS, TOKEN, USER_INFO
-import Ryuzaki.modules.sql.userinfo_sql as sql
+from Ryuzaki import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER
+from Ryuzaki.__main__ import STATS, USER_INFO
 from Ryuzaki.modules.disable import DisableAbleCommandHandler
-from Ryuzaki.modules.sql.global_bans_sql import is_user_gbanned
-from Ryuzaki.modules.sql.afk_sql import is_afk, check_afk_status
-from Ryuzaki.modules.sql.users_sql import get_user_num_chats
-from Ryuzaki.modules.helper_funcs.chat_status import sudo_plus
 from Ryuzaki.modules.helper_funcs.extraction import extract_user
-from Ryuzaki import telethn as SaitamaTelethonClient
+from Ryuzaki.modules.helper_funcs.filters import CustomFilters
 
-
-def no_by_per(totalhp, percentage):
-    """
-    rtype: num of `percentage` from total
-    eg: 1000, 10 -> 10% of 1000 (100)
-    """
-    return totalhp * percentage / 100
-
-
-def get_percentage(totalhp, earnedhp):
-    """
-    rtype: percentage of `totalhp` num
-    eg: (1000, 100) will return 10%
-    """
-
-    matched_less = totalhp - earnedhp
-    per_of_totalhp = 100 - matched_less * 100.0 / totalhp
-    per_of_totalhp = str(int(per_of_totalhp))
-    return per_of_totalhp
-
-
-def hpmanager(user):
-    total_hp = (get_user_num_chats(user.id) + 10) * 10
-
-    if not is_user_gbanned(user.id):
-
-        # Assign new var `new_hp` since we need `total_hp` in
-        # end to calculate percentage.
-        new_hp = total_hp
-
-        # if no username decrease 25% of hp.
-        if not user.username:
-            new_hp -= no_by_per(total_hp, 25)
-        try:
-            dispatcher.bot.get_user_profile_photos(user.id).photos[0][-1]
-        except IndexError:
-            # no profile photo ==> -25% of hp
-            new_hp -= no_by_per(total_hp, 25)
-        # if no /setme exist ==> -20% of hp
-        if not sql.get_user_me_info(user.id):
-            new_hp -= no_by_per(total_hp, 20)
-        # if no bio exsit ==> -10% of hp
-        if not sql.get_user_bio(user.id):
-            new_hp -= no_by_per(total_hp, 10)
-
-        if is_afk(user.id):
-            afkst = check_afk_status(user.id)
-            # if user is afk and no reason then decrease 7%
-            # else if reason exist decrease 5%
-            if not afkst.reason:
-                new_hp -= no_by_per(total_hp, 7)
-            else:
-                new_hp -= no_by_per(total_hp, 5)
-
-        # fbanned users will have (2*number of fbans) less from max HP
-        # Example: if HP is 100 but user has 5 diff fbans
-        # Available HP is (2*5) = 10% less than Max HP
-        # So.. 10% of 100HP = 90HP
-
-    # Commenting out fban health decrease cause it wasnt working and isnt needed ig.
-    # _, fbanlist = get_user_fbanlist(user.id)
-    # new_hp -= no_by_per(total_hp, 2 * len(fbanlist))
-
-    # Bad status effects:
-    # gbanned users will always have 5% HP from max HP
-    # Example: If HP is 100 but gbanned
-    # Available HP is 5% of 100 = 5HP
-
-    else:
-        new_hp = no_by_per(total_hp, 5)
-
-    return {
-        "earnedhp": int(new_hp),
-        "totalhp": int(total_hp),
-        "percentage": get_percentage(total_hp, new_hp),
-    }
-
-
-def make_bar(per):
-    done = min(round(per / 10), 10)
-    return "■" * done + "□" * (10 - done)
-
-
-@run_async
-def get_id(update: Update, context: CallbackContext):
-    bot, args = context.bot, context.args
-    message = update.effective_message
-    chat = update.effective_chat
-    msg = update.effective_message
-    user_id = extract_user(msg, args)
-
-    if user_id:
-
-        if msg.reply_to_message and msg.reply_to_message.forward_from:
-
-            user1 = message.reply_to_message.from_user
-            user2 = message.reply_to_message.forward_from
-
-            msg.reply_text(
-                f"<b>Telegram ID:</b>,"
-                f"• {html.escape(user2.first_name)} - <code>{user2.id}</code>.\n"
-                f"• {html.escape(user1.first_name)} - <code>{user1.id}</code>.",
-                parse_mode=ParseMode.HTML,
-            )
-
-        else:
-
-            user = bot.get_chat(user_id)
-            msg.reply_text(
-                f"{html.escape(user.first_name)}'s id is <code>{user.id}</code>.",
-                parse_mode=ParseMode.HTML,
-            )
-
-    else:
-
-        if chat.type == "private":
-            msg.reply_text(
-                f"Your id is <code>{chat.id}</code>.", parse_mode=ParseMode.HTML,
-            )
-
-        else:
-            msg.reply_text(
-                f"This group's id is <code>{chat.id}</code>.", parse_mode=ParseMode.HTML,
-            )
-
-
-@SaitamaTelethonClient.on(
-    events.NewMessage(
-        pattern="/ginfo ", from_users=(TIGERS or []) + (DRAGONS or []) + (DEMONS or []),
-    ),
+RUN_STRINGS = (
+    "Where do you think you're going?",
+    "Huh? what? did they get away?",
+    "ZZzzZZzz... Huh? what? oh, just them again, nevermind.",
+    "Get back here!",
+    "Not so fast...",
+    "Look out for the wall!",
+    "Don't leave me alone with them!!",
+    "You run, you die.",
+    "Jokes on you, I'm everywhere",
+    "You're gonna regret that...",
+    "You could also try /kickme, I hear that's fun.",
+    "Go bother someone else, no-one here cares.",
+    "You can run, but you can't hide.",
+    "Is that all you've got?",
+    "I'm behind you...",
+    "You've got company!",
+    "We can do this the easy way, or the hard way.",
+    "You just don't get it, do you?",
+    "Yeah, you better run!",
+    "Please, remind me how much I care?",
+    "I'd run faster if I were you.",
+    "That's definitely the droid we're looking for.",
+    "May the odds be ever in your favour.",
+    "Famous last words.",
+    "And they disappeared forever, never to be seen again.",
+    "\"Oh, look at me! I'm so cool, I can run from a bot!\" - this person",
+    "Yeah yeah, just tap /kickme already.",
+    "Here, take this ring and head to Mordor while you're at it.",
+    "Legend has it, they're still running...",
+    "Unlike Harry Potter, your parents can't protect you from me.",
+    "Fear leads to anger. Anger leads to hate. Hate leads to suffering. If you keep running in fear, you might "
+    "be the next Vader.",
+    "Multiple calculations later, I have decided my interest in your shenanigans is exactly 0.",
+    "Legend has it, they're still running.",
+    "Keep it up, not sure we want you here anyway.",
+    "You're a wiza- Oh. Wait. You're not Harry, keep moving.",
+    "NO RUNNING IN THE HALLWAYS!",
+    "Hasta la vista, baby.",
+    "Who let the dogs out?",
+    "It's funny, because no one cares.",
+    "Ah, what a waste. I liked that one.",
+    "Frankly, my dear, I don't give a damn.",
+    "My milkshake brings all the boys to yard... So run faster!",
+    "You can't HANDLE the truth!",
+    "A long time ago, in a galaxy far far away... Someone would've cared about that. Not anymore though.",
+    "Hey, look at them! They're running from the inevitable banhammer... Cute.",
+    "Han shot first. So will I.",
+    "What are you running after, a white rabbit?",
+    "As The Doctor would say... RUN!",
 )
-async def group_info(event) -> None:
-    chat = event.text.split(" ", 1)[1]
-    try:
-        entity = await event.client.get_entity(chat)
-        totallist = await event.client.get_participants(
-            entity, filter=ChannelParticipantsAdmins,
-        )
-        ch_full = await event.client(GetFullChannelRequest(channel=entity))
-    except:
-        await event.reply(
-            "Can't for some reason, maybe it is a private one or that I am banned there.",
-        )
-        return
-    msg = f"**ID**: `{entity.id}`"
-    msg += f"\n**Title**: `{entity.title}`"
-    msg += f"\n**Datacenter**: `{entity.photo.dc_id}`"
-    msg += f"\n**Video PFP**: `{entity.photo.has_video}`"
-    msg += f"\n**Supergroup**: `{entity.megagroup}`"
-    msg += f"\n**Restricted**: `{entity.restricted}`"
-    msg += f"\n**Scam**: `{entity.scam}`"
-    msg += f"\n**Slowmode**: `{entity.slowmode_enabled}`"
-    if entity.username:
-        msg += f"\n**Username**: {entity.username}"
-    msg += "\n\n**Member Stats:**"
-    msg += f"\n`Admins:` `{len(totallist)}`"
-    msg += f"\n`Users`: `{totallist.total}`"
-    msg += "\n\n**Admins List:**"
-    for x in totallist:
-        msg += f"\n• [{x.id}](tg://user?id={x.id})"
-    msg += f"\n\n**Description**:\n`{ch_full.full_chat.about}`"
-    await event.reply(msg)
+
+SLAP_TEMPLATES = (
+    "{user1} {hits} {user2} with a {item}.",
+    "{user1} {hits} {user2} in the face with a {item}.",
+    "{user1} {hits} {user2} around a bit with a {item}.",
+    "{user1} {throws} a {item} at {user2}.",
+    "{user1} grabs a {item} and {throws} it at {user2}'s face.",
+    "{user1} launches a {item} in {user2}'s general direction.",
+    "{user1} starts slapping {user2} silly with a {item}.",
+    "{user1} pins {user2} down and repeatedly {hits} them with a {item}.",
+    "{user1} grabs up a {item} and {hits} {user2} with it.",
+    "{user1} ties {user2} to a chair and {throws} a {item} at them.",
+    "{user1} gave a friendly push to help {user2} learn to swim in lava."
+)
+
+ITEMS = (
+    "cast iron skillet",
+    "large trout",
+    "baseball bat",
+    "cricket bat",
+    "wooden cane",
+    "nail",
+    "printer",
+    "shovel",
+    "CRT monitor",
+    "physics textbook",
+    "toaster",
+    "portrait of Richard Stallman",
+    "television",
+    "five ton truck",
+    "roll of duct tape",
+    "book",
+    "laptop",
+    "old television",
+    "sack of rocks",
+    "rainbow trout",
+    "rubber chicken",
+    "spiked bat",
+    "fire extinguisher",
+    "heavy rock",
+    "chunk of dirt",
+    "beehive",
+    "piece of rotten meat",
+    "bear",
+    "ton of bricks",
+)
+
+THROW = (
+    "throws",
+    "flings",
+    "chucks",
+    "hurls",
+)
+
+HIT = (
+    "hits",
+    "whacks",
+    "slaps",
+    "smacks",
+    "bashes",
+)
+
+GMAPS_LOC = "https://maps.googleapis.com/maps/api/geocode/json"
+GMAPS_TIME = "https://maps.googleapis.com/maps/api/timezone/json"
 
 
 @run_async
-def gifid(update: Update, context: CallbackContext):
-    msg = update.effective_message
-    if msg.reply_to_message and msg.reply_to_message.animation:
-        update.effective_message.reply_text(
-            f"Gif ID:\n<code>{msg.reply_to_message.animation.file_id}</code>",
-            parse_mode=ParseMode.HTML,
-        )
+def runs(bot: Bot, update: Update):
+    update.effective_message.reply_text(random.choice(RUN_STRINGS))
+
+
+@run_async
+def slap(bot: Bot, update: Update, args: List[str]):
+    msg = update.effective_message  # type: Optional[Message]
+
+    # reply to correct message
+    reply_text = msg.reply_to_message.reply_text if msg.reply_to_message else msg.reply_text
+
+    # get user who sent message
+    if msg.from_user.username:
+        curr_user = "@" + escape_markdown(msg.from_user.username)
     else:
-        update.effective_message.reply_text("Please reply to a gif to get its ID.")
+        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+
+    user_id = extract_user(update.effective_message, args)
+    if user_id:
+        slapped_user = bot.get_chat(user_id)
+        user1 = curr_user
+        if slapped_user.username:
+            user2 = "@" + escape_markdown(slapped_user.username)
+        else:
+            user2 = "[{}](tg://user?id={})".format(slapped_user.first_name,
+                                                   slapped_user.id)
+
+    # if no target found, bot targets the sender
+    else:
+        user1 = "[{}](tg://user?id={})".format(bot.first_name, bot.id)
+        user2 = curr_user
+
+    temp = random.choice(SLAP_TEMPLATES)
+    item = random.choice(ITEMS)
+    hit = random.choice(HIT)
+    throw = random.choice(THROW)
+
+    repl = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw)
+
+    reply_text(repl, parse_mode=ParseMode.MARKDOWN)
+
+
+@run_async
+def get_bot_ip(bot: Bot, update: Update):
+    """ Sends the bot's IP address, so as to be able to ssh in if necessary.
+        OWNER ONLY.
+    """
+    res = requests.get("http://ipinfo.io/ip")
+    update.message.reply_text(res.text)
+
+
+@run_async
+def get_id(bot: Bot, update: Update, args: List[str]):
+    user_id = extract_user(update.effective_message, args)
+    if user_id:
+        if update.effective_message.reply_to_message and update.effective_message.reply_to_message.forward_from:
+            user1 = update.effective_message.reply_to_message.from_user
+            user2 = update.effective_message.reply_to_message.forward_from
+            update.effective_message.reply_text(
+                "The original sender, {}, has an ID of `{}`.\nThe forwarder, {}, has an ID of `{}`.".format(
+                    escape_markdown(user2.first_name),
+                    user2.id,
+                    escape_markdown(user1.first_name),
+                    user1.id),
+                parse_mode=ParseMode.MARKDOWN)
+        else:
+            user = bot.get_chat(user_id)
+            update.effective_message.reply_text("{}'s id is `{}`.".format(escape_markdown(user.first_name), user.id),
+                                                parse_mode=ParseMode.MARKDOWN)
+    else:
+        chat = update.effective_chat  # type: Optional[Chat]
+        if chat.type == "private":
+            update.effective_message.reply_text("Your id is `{}`.".format(chat.id),
+                                                parse_mode=ParseMode.MARKDOWN)
+
+        else:
+            update.effective_message.reply_text("This group's id is `{}`.".format(chat.id),
+                                                parse_mode=ParseMode.MARKDOWN)
 
 
 @run_async
@@ -265,203 +269,193 @@ def info(bot: Bot, update: Update, args: List[str]):
     update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
 
 
-
 @run_async
-def about_me(update: Update, context: CallbackContext):
-    bot, args = context.bot, context.args
-    message = update.effective_message
-    user_id = extract_user(message, args)
-
-    if user_id:
-        user = bot.get_chat(user_id)
-    else:
-        user = message.from_user
-
-    info = sql.get_user_me_info(user.id)
-
-    if info:
-        update.effective_message.reply_text(
-            f"*{user.first_name}*:\n{escape_markdown(info)}",
-            parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True,
-        )
-    elif message.reply_to_message:
-        username = message.reply_to_message.from_user.first_name
-        update.effective_message.reply_text(
-            f"{username} hasn't set an info message about themselves yet!",
-        )
-    else:
-        update.effective_message.reply_text("There isnt one, use /setme to set one.")
-
-
-@run_async
-def set_about_me(update: Update, context: CallbackContext):
-    message = update.effective_message
-    user_id = message.from_user.id
-    if user_id in [777000, 1087968824]:
-        message.reply_text("Error! Unauthorized")
+def get_time(bot: Bot, update: Update, args: List[str]):
+    location = " ".join(args)
+    if location.lower() == bot.first_name.lower():
+        update.effective_message.reply_text("Its always banhammer time for me!")
+        bot.send_sticker(update.effective_chat.id, BAN_STICKER)
         return
-    bot = context.bot
-    if message.reply_to_message:
-        repl_message = message.reply_to_message
-        repl_user_id = repl_message.from_user.id
-        if repl_user_id in [bot.id, 777000, 1087968824] and (user_id in DEV_USERS):
-            user_id = repl_user_id
-    text = message.text
-    info = text.split(None, 1)
-    if len(info) == 2:
-        if len(info[1]) < MAX_MESSAGE_LENGTH // 4:
-            sql.set_user_me_info(user_id, info[1])
-            if user_id in [777000, 1087968824]:
-                message.reply_text("Authorized...Information updated!")
-            elif user_id == bot.id:
-                message.reply_text("I have updated my info with the one you provided!")
-            else:
-                message.reply_text("Information updated!")
-        else:
-            message.reply_text(
-                "The info needs to be under {} characters! You have {}.".format(
-                    MAX_MESSAGE_LENGTH // 4, len(info[1]),
-                ),
-            )
+
+    res = requests.get(GMAPS_LOC, params=dict(address=location))
+
+    if res.status_code == 200:
+        loc = json.loads(res.text)
+        if loc.get('status') == 'OK':
+            lat = loc['results'][0]['geometry']['location']['lat']
+            long = loc['results'][0]['geometry']['location']['lng']
+
+            country = None
+            city = None
+
+            address_parts = loc['results'][0]['address_components']
+            for part in address_parts:
+                if 'country' in part['types']:
+                    country = part.get('long_name')
+                if 'administrative_area_level_1' in part['types'] and not city:
+                    city = part.get('long_name')
+                if 'locality' in part['types']:
+                    city = part.get('long_name')
+
+            if city and country:
+                location = "{}, {}".format(city, country)
+            elif country:
+                location = country
+
+            timenow = int(datetime.utcnow().timestamp())
+            res = requests.get(GMAPS_TIME, params=dict(location="{},{}".format(lat, long), timestamp=timenow))
+            if res.status_code == 200:
+                offset = json.loads(res.text)['dstOffset']
+                timestamp = json.loads(res.text)['rawOffset']
+                time_there = datetime.fromtimestamp(timenow + timestamp + offset).strftime("%H:%M:%S on %A %d %B")
+                update.message.reply_text("It's {} in {}".format(time_there, location))
 
 
 @run_async
-@sudo_plus
-def stats(update: Update, context: CallbackContext):
-    stats = "<b>📊 Current stats:</b>\n" + "\n".join([mod.__stats__() for mod in STATS])
-    result = re.sub(r"(\d+)", r"<code>\1</code>", stats)
-    update.effective_message.reply_text(result, parse_mode=ParseMode.HTML)
-
-
-@run_async
-def about_bio(update: Update, context: CallbackContext):
-    bot, args = context.bot, context.args
+def echo(bot: Bot, update: Update):
+    args = update.effective_message.text.split(None, 1)
     message = update.effective_message
-
-    user_id = extract_user(message, args)
-    if user_id:
-        user = bot.get_chat(user_id)
+    if message.reply_to_message:
+        message.reply_to_message.reply_text(args[1])
     else:
-        user = message.from_user
-
-    info = sql.get_user_bio(user.id)
-
-    if info:
-        update.effective_message.reply_text(
-            "*{}*:\n{}".format(user.first_name, escape_markdown(info)),
-            parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True,
-        )
-    elif message.reply_to_message:
-        username = user.first_name
-        update.effective_message.reply_text(
-            f"{username} hasn't had a message set about themselves yet!\nSet one using /setbio",
-        )
-    else:
-        update.effective_message.reply_text(
-            "You haven't had a bio set about yourself yet!",
-        )
+        message.reply_text(args[1], quote=False)
+    message.delete()
 
 
 @run_async
-def set_about_bio(update: Update, context: CallbackContext):
-    message = update.effective_message
-    sender_id = update.effective_user.id
-    bot = context.bot
+def gdpr(bot: Bot, update: Update):
+    update.effective_message.reply_text("Deleting identifiable data...")
+    for mod in GDPR:
+        mod.__gdpr__(update.effective_user.id)
 
-    if message.reply_to_message:
-        repl_message = message.reply_to_message
-        user_id = repl_message.from_user.id
+    update.effective_message.reply_text("Your personal data has been deleted.\n\nNote that this will not unban "
+                                        "you from any chats, as that is telegram data, not Marie data. "
+                                        "Flooding, warns, and gbans are also preserved, as of "
+                                        "[this](https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/individual-rights/right-to-erasure/), "
+                                        "which clearly states that the right to erasure does not apply "
+                                        "\"for the performance of a task carried out in the public interest\", as is "
+                                        "the case for the aforementioned pieces of data.",
+                                        parse_mode=ParseMode.MARKDOWN)
 
-        if user_id == message.from_user.id:
-            message.reply_text(
-                "Ha, you can't set your own bio! You're at the mercy of others here...",
-            )
-            return
 
-        if user_id in [777000, 1087968824] and sender_id not in DEV_USERS:
-            message.reply_text("You are not authorised")
-            return
+MARKDOWN_HELP = """
+Markdown is a very powerful formatting tool supported by telegram. {} has some enhancements, to make sure that \
+saved messages are correctly parsed, and to allow you to create buttons.
 
-        if user_id == bot.id and sender_id not in DEV_USERS:
-            message.reply_text(
-                "Erm... yeah, I only trust Heroes Association to set my bio.",
-            )
-            return
+- <code>_italic_</code>: wrapping text with '_' will produce italic text
+- <code>*bold*</code>: wrapping text with '*' will produce bold text
+- <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
+- <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>, \
+and tapping on it will open the page at <code>someURL</code>.
+EG: <code>[test](example.com)</code>
 
-        text = message.text
-        bio = text.split(
-            None, 1,
-        )  # use python's maxsplit to only remove the cmd, hence keeping newlines.
+- <code>[buttontext](buttonurl:someURL)</code>: this is a special enhancement to allow users to have telegram \
+buttons in their markdown. <code>buttontext</code> will be what is displayed on the button, and <code>someurl</code> \
+will be the url which is opened.
+EG: <code>[This is a button](buttonurl:example.com)</code>
 
-        if len(bio) == 2:
-            if len(bio[1]) < MAX_MESSAGE_LENGTH // 4:
-                sql.set_user_bio(user_id, bio[1])
-                message.reply_text(
-                    "Updated {}'s bio!".format(repl_message.from_user.first_name),
-                )
-            else:
-                message.reply_text(
-                    "Bio needs to be under {} characters! You tried to set {}.".format(
-                        MAX_MESSAGE_LENGTH // 4, len(bio[1]),
-                    ),
-                )
+If you want multiple buttons on the same line, use :same, as such:
+<code>[one](buttonurl://example.com)
+[two](buttonurl://google.com:same)</code>
+This will create two buttons on a single line, instead of one button per line.
+
+Keep in mind that your message <b>MUST</b> contain some text other than just a button!
+""".format(dispatcher.bot.first_name)
+
+
+@run_async
+def markdown_help(bot: Bot, update: Update):
+    update.effective_message.reply_text(MARKDOWN_HELP, parse_mode=ParseMode.HTML)
+    update.effective_message.reply_text("Try forwarding the following message to me, and you'll see!")
+    update.effective_message.reply_text("/save test This is a markdown test. _italics_, *bold*, `code`, "
+                                        "[URL](example.com) [button](buttonurl:github.com) "
+                                        "[button2](buttonurl://google.com:same)")
+
+
+@run_async
+def stats(bot: Bot, update: Update):
+    update.effective_message.reply_text("Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS]))
+
+@run_async
+def stickerid(bot: Bot, update: Update):
+    msg = update.effective_message
+    if msg.reply_to_message and msg.reply_to_message.sticker:
+        update.effective_message.reply_text("Hello " +
+                                            "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+                                            + ", The sticker id you are replying is :\n```" + 
+                                            escape_markdown(msg.reply_to_message.sticker.file_id) + "```",
+                                            parse_mode=ParseMode.MARKDOWN)
     else:
-        message.reply_text("Reply to someone to set their bio!")
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please reply to sticker message to get id sticker",
+                                            parse_mode=ParseMode.MARKDOWN)
+@run_async
+def getsticker(bot: Bot, update: Update):
+    msg = update.effective_message
+    chat_id = update.effective_chat.id
+    if msg.reply_to_message and msg.reply_to_message.sticker:
+        bot.sendChatAction(chat_id, "typing")
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please check the file you requested below."
+                                            "\nPlease use this feature wisely!",
+                                            parse_mode=ParseMode.MARKDOWN)
+        bot.sendChatAction(chat_id, "upload_document")
+        file_id = msg.reply_to_message.sticker.file_id
+        newFile = bot.get_file(file_id)
+        newFile.download('sticker.png')
+        bot.sendDocument(chat_id, document=open('sticker.png', 'rb'))
+        bot.sendChatAction(chat_id, "upload_photo")
+        bot.send_photo(chat_id, photo=open('sticker.png', 'rb'))
+        
+    else:
+        bot.sendChatAction(chat_id, "typing")
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please reply to sticker message to get sticker image",
+                                            parse_mode=ParseMode.MARKDOWN)
 
-
-def __user_info__(user_id):
-    bio = html.escape(sql.get_user_bio(user_id) or "")
-    me = html.escape(sql.get_user_me_info(user_id) or "")
-    result = ""
-    if me:
-        result += f"<b>About user:</b>\n{me}\n"
-    if bio:
-        result += f"<b>What others say:</b>\n{bio}\n"
-    result = result.strip("\n")
-    return result
-
-
+# /ip is for private use
 __help__ = """
-*ID:*
- • `/id`*:* get the current group id. If used by replying to a message, gets that user's id.
- • `/gifid`*:* reply to a gif to me to tell you its file ID.
-
-*Overall Information about you:*
- • `/info`*:* get information about a user.
-
+ - /id: get the current group id. If used by replying to a message, gets that user's id.
+ - /runs: reply a random string from an array of replies.
+ - /slap: slap a user, or get slapped if not a reply.
+ - /time <place>: gives the local time at the given place.
+ - /info: get information about a user.
+ - /gdpr: deletes your information from the bot's database. Private chats only.
+ - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
+ - /stickerid: reply to a sticker and get sticker id of that.
+ - /getsticker: reply to a sticker and get that sticker as .png and image. 
 """
 
-SET_BIO_HANDLER = DisableAbleCommandHandler("setbio", set_about_bio)
-GET_BIO_HANDLER = DisableAbleCommandHandler("bio", about_bio)
+__mod_name__ = "Misc"
 
-STATS_HANDLER = CommandHandler("stats", stats)
-ID_HANDLER = DisableAbleCommandHandler("id", get_id)
-GIFID_HANDLER = DisableAbleCommandHandler("gifid", gifid)
-INFO_HANDLER = DisableAbleCommandHandler(("info", "book"), info)
+ID_HANDLER = DisableAbleCommandHandler("id", get_id, pass_args=True)
+IP_HANDLER = CommandHandler("ip", get_bot_ip, filters=Filters.chat(OWNER_ID))
 
-SET_ABOUT_HANDLER = DisableAbleCommandHandler("setme", set_about_me)
-GET_ABOUT_HANDLER = DisableAbleCommandHandler("me", about_me)
+TIME_HANDLER = CommandHandler("time", get_time, pass_args=True)
 
-dispatcher.add_handler(STATS_HANDLER)
+RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
+SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
+INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True)
+
+ECHO_HANDLER = CommandHandler("echo", echo, filters=Filters.user(OWNER_ID))
+MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
+
+STATS_HANDLER = CommandHandler("stats", stats, filters=CustomFilters.sudo_filter)
+GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
+
+STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
+GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
+
+
 dispatcher.add_handler(ID_HANDLER)
-dispatcher.add_handler(GIFID_HANDLER)
+dispatcher.add_handler(IP_HANDLER)
+dispatcher.add_handler(TIME_HANDLER)
+dispatcher.add_handler(RUNS_HANDLER)
+dispatcher.add_handler(SLAP_HANDLER)
 dispatcher.add_handler(INFO_HANDLER)
-dispatcher.add_handler(SET_BIO_HANDLER)
-dispatcher.add_handler(GET_BIO_HANDLER)
-dispatcher.add_handler(SET_ABOUT_HANDLER)
-dispatcher.add_handler(GET_ABOUT_HANDLER)
-
-__mod_name__ = "Info"
-__command_list__ = ["setbio", "bio", "setme", "me", "info"]
-__handlers__ = [
-    ID_HANDLER,
-    GIFID_HANDLER,
-    INFO_HANDLER,
-    SET_BIO_HANDLER,
-    GET_BIO_HANDLER,
-    SET_ABOUT_HANDLER,
-    GET_ABOUT_HANDLER,
-    STATS_HANDLER,
-]
+dispatcher.add_handler(ECHO_HANDLER)
+dispatcher.add_handler(MD_HELP_HANDLER)
+dispatcher.add_handler(STATS_HANDLER)
+dispatcher.add_handler(GDPR_HANDLER)
+dispatcher.add_handler(STICKERID_HANDLER)
+dispatcher.add_handler(GETSTICKER_HANDLER)
