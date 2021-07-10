@@ -238,10 +238,10 @@ def info(update: Update, context: CallbackContext):
     else:
         return
 
-    rep = message.reply_text("<code>Appraising...</code>", parse_mode=ParseMode.HTML)
+    rep = message.reply_text("<code>Extracting...</code>", parse_mode=ParseMode.HTML)
 
     text = (
-        f"╒═══「<b> Appraisal results:</b> 」\n"
+        f"<b> Extracted Info:</b> 」\n"
         f"ID: <code>{user.id}</code>\n"
         f"First Name: {html.escape(user.first_name)}"
     )
@@ -269,93 +269,6 @@ def info(update: Update, context: CallbackContext):
                     text += _stext.format("Detected")
                 elif status in {"administrator", "creator"}:
                     text += _stext.format("Admin")
-    if user_id not in [bot.id, 777000, 1087968824]:
-        userhp = hpmanager(user)
-        text += f"\n\n<b>Health:</b> <code>{userhp['earnedhp']}/{userhp['totalhp']}</code>\n[<i>{make_bar(int(userhp['percentage']))} </i>{userhp['percentage']}%]"
-
-    try:
-        spamwtc = sw.get_ban(int(user.id))
-        if spamwtc:
-            text += "\n\n<b>This person is Spamwatched!</b>"
-            text += f"\nReason: <pre>{spamwtc.reason}</pre>"
-            text += "\nAppeal at @SpamWatchSupport"
-        else:
-            pass
-    except:
-        pass  # don't crash if api is down somehow...
-
-    disaster_level_present = False
-
-    if user.id == OWNER_ID:
-        text += "\n\nThe Disaster level of this person is 'God'."
-        disaster_level_present = True
-    elif user.id in DEV_USERS:
-        text += "\n\nThis user is member of 'Hero Association'."
-        disaster_level_present = True
-    elif user.id in DRAGONS:
-        text += "\n\nThe Disaster level of this person is 'Dragon'."
-        disaster_level_present = True
-    elif user.id in DEMONS:
-        text += "\n\nThe Disaster level of this person is 'Demon'."
-        disaster_level_present = True
-    elif user.id in TIGERS:
-        text += "\n\nThe Disaster level of this person is 'Tiger'."
-        disaster_level_present = True
-    elif user.id in WOLVES:
-        text += "\n\nThe Disaster level of this person is 'Wolf'."
-        disaster_level_present = True
-
-    if disaster_level_present:
-        text += ' [<a href="https://t.me/OnePunchUpdates/155">?</a>]'.format(
-            bot.username,
-        )
-
-    try:
-        user_member = chat.get_member(user.id)
-        if user_member.status == "administrator":
-            result = requests.post(
-                f"https://api.telegram.org/bot{TOKEN}/getChatMember?chat_id={chat.id}&user_id={user.id}",
-            )
-            result = result.json()["result"]
-            if "custom_title" in result.keys():
-                custom_title = result["custom_title"]
-                text += f"\n\nTitle:\n<b>{custom_title}</b>"
-    except BadRequest:
-        pass
-
-    for mod in USER_INFO:
-        try:
-            mod_info = mod.__user_info__(user.id).strip()
-        except TypeError:
-            mod_info = mod.__user_info__(user.id, chat.id).strip()
-        if mod_info:
-            text += "\n\n" + mod_info
-
-    if INFOPIC:
-        try:
-            profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
-            _file = bot.get_file(profile["file_id"])
-            _file.download(f"{user.id}.png")
-
-            message.reply_document(
-                document=open(f"{user.id}.png", "rb"),
-                caption=(text),
-                parse_mode=ParseMode.HTML,
-                disable_web_page_preview=True,
-            )
-
-            os.remove(f"{user.id}.png")
-        # Incase user don't have profile pic, send normal text
-        except IndexError:
-            message.reply_text(
-                text, parse_mode=ParseMode.HTML, disable_web_page_preview=True,
-            )
-
-    else:
-        message.reply_text(
-            text, parse_mode=ParseMode.HTML, disable_web_page_preview=True,
-        )
-
     rep.delete()
 
 
@@ -521,25 +434,9 @@ __help__ = """
  • `/id`*:* get the current group id. If used by replying to a message, gets that user's id.
  • `/gifid`*:* reply to a gif to me to tell you its file ID.
 
-*Self addded information:*
- • `/setme <text>`*:* will set your info
- • `/me`*:* will get your or another user's info.
-Examples:
- `/setme I am a wolf.`
- `/me @username(defaults to yours if no user specified)`
-
-*Information others add on you:*
- • `/bio`*:* will get your or another user's bio. This cannot be set by yourself.
-• `/setbio <text>`*:* while replying, will save another user's bio
-Examples:
- `/bio @username(defaults to yours if not specified).`
- `/setbio This user is a wolf` (reply to the user)
-
 *Overall Information about you:*
  • `/info`*:* get information about a user.
 
-*What is that health thingy?*
- Come and see [HP System explained](https://t.me/OnePunchUpdates/192)
 """
 
 SET_BIO_HANDLER = DisableAbleCommandHandler("setbio", set_about_bio)
