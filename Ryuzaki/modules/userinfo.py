@@ -238,8 +238,6 @@ def info(update: Update, context: CallbackContext):
     else:
         return
 
-    rep = message.reply_text("<code>Extracting...</code>", parse_mode=ParseMode.HTML)
-
     text = (
         f"<b> Extracted Info:</b> 」\n"
         f"ID: <code>{user.id}</code>\n"
