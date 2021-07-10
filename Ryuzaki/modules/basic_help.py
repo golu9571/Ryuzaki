@@ -23,3 +23,27 @@ HELP_TEXT = """
 async def _(event):
 
     await event.edit(HELP_TEXT, buttons=[[Button.inline("Admin Help", data="admin_help")]])
+
+ADMIN_TXT = """
+**Here is the help for the Admin!**
+
+• `/admins`: list of admins in the chat
+• `/pin`: silently pins the message replied to - add 'loud' or 'notify' to give notifs to users
+• `/unpin`: unpins the currently pinned message
+• `/invitelink`: gets invitelink
+• `/promote`: promotes the user
+• `/demote`: demotes the user.
+• `/setsticker`: As a reply to some sticker to set it as group sticker set!
+• `/admincache`: force refresh the admins list.
+
+**This is only Basic Commands For Full Command List** - `/help admin`.
+
+**List May Update In Next Update.**
+
+✨ Join Updates : @RyuzakiNews
+"""
+
+@telethn.on(events.callbackquery.CallbackQuery(data="admin_help"))
+async def _(event):
+
+    await event.edit(ADMIN_TXT, buttons=[[Button.inline("Back", data="basic_help")]])
