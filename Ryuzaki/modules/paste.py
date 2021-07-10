@@ -2,8 +2,8 @@ import requests
 from Ryuzaki import dispatcher
 from Ryuzaki.modules.disable import DisableAbleCommandHandler
 from telegram import ParseMode, Update
-from telegram.ext import CallbackContext, run_async
-
+from telegram.ext import CallbackContext
+from telegram.ext import run_async
 
 @run_async
 def paste(update: Update, context: CallbackContext):
