@@ -85,3 +85,11 @@ async def _(event):
 
     await event.edit(USER_TXT, buttons=[
     [Button.inline("Back", data="basic_help")]])
+
+V_TXT = """
+**Video Tutorial How To Use Ryuzaki?**
+
+**Click Here To See :** [Watch](https://t.me/RyuzakiNews/4)
+
+_More Video tutorial regarding My use will updated soon
+Report bugs & for more tutorials, Ask__ [here](https://EvilBinner)
