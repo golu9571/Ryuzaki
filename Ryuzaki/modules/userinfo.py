@@ -271,7 +271,7 @@ def info(update: Update, context: CallbackContext):
                     text += _stext.format("Admin")
     if user_id not in [bot.id, 777000, 1087968824]:
         userhp = hpmanager(user)
-        text += f"\n<b>Is Bot : None"
+        text += f"\n<b>Is Bot : None</b>"
 
     try:
         spamwtc = sw.get_ban(int(user.id))
