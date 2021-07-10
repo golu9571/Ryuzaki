@@ -16,13 +16,19 @@ HELP_TEXT = """
 
 • Than send `/admincache@TheRyuzakiBot` in that chat to refresh admin list in My database.
 
-*All done now use below given button's to know about use.*
+**All done now use below given button's to know about use.**
 """
+
+btn =[
+    [Button.inline("Admin Help", data="admin_help"), Button.inline("Bans", data="bans")],
+    [Button.inline("User Help", data="user_help"), Button.inline("Video Tutorial", data="v_tuts")],
+    [Button.inline("Extra Help", data="extra_help")],
+    [Button.inline("Back", data="Ryuzakibot_back")]]
 
 @telethn.on(events.callbackquery.CallbackQuery(data="basic_help"))
 async def _(event):
 
-    await event.edit(HELP_TEXT, buttons=[[Button.inline("Admin Help", data="admin_help")]])
+    await event.edit(HELP_TEXT, buttons=btn)
 
 ADMIN_TXT = """
 **Here is the help for the Admin!**
@@ -40,10 +46,12 @@ ADMIN_TXT = """
 
 **List May Update In Next Update.**
 
-✨ Join Updates : @RyuzakiNews
+**✨ Join Updates : @RyuzakiNews**
 """
 
 @telethn.on(events.callbackquery.CallbackQuery(data="admin_help"))
 async def _(event):
 
-    await event.edit(ADMIN_TXT, buttons=[[Button.inline("Back", data="basic_help")]])
+    await event.edit(ADMIN_TXT, buttons=[
+    [Button.inline("Back", data="basic_help"))]
+
