@@ -53,5 +53,5 @@ ADMIN_TXT = """
 async def _(event):
 
     await event.edit(ADMIN_TXT, buttons=[
-    [Button.inline("Back", data="basic_help")]]
+    [Button.inline("Back", data="basic_help")]])
 
