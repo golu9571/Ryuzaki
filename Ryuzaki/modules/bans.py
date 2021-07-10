@@ -268,7 +268,7 @@ def punch(update: Update, context: CallbackContext) -> str:
         # bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
         bot.sendMessage(
             chat.id,
-            f"One Punched! {mention_html(member.user.id, html.escape(member.user.first_name))}.",
+            f"Kicked ! ! {mention_html(member.user.id, html.escape(member.user.first_name))}.",
             parse_mode=ParseMode.HTML,
         )
         log = (
@@ -291,7 +291,7 @@ def punch(update: Update, context: CallbackContext) -> str:
 @run_async
 @bot_admin
 @can_restrict
-def punchme(update: Update, context: CallbackContext):
+def kickme(update: Update, context: CallbackContext):
     user_id = update.effective_message.from_user.id
     if is_user_admin(update.effective_chat, user_id):
         update.effective_message.reply_text("I wish I could... but you're an admin.")
@@ -399,7 +399,7 @@ def selfunban(context: CallbackContext, update: Update) -> str:
 
 
 __help__ = """
- • /punchme*:* punchs the user who issued the command
+ • /kickme*:* punchs the user who issued the command
 
 *Admins only:*
  • /ban <userhandle>*:* bans a user. (via handle, or reply)
@@ -419,14 +419,14 @@ TEMPBAN_HANDLER = CommandHandler(["tban"], temp_ban)
 PUNCH_HANDLER = CommandHandler("punch", punch)
 UNBAN_HANDLER = CommandHandler("unban", unban)
 ROAR_HANDLER = CommandHandler("roar", selfunban)
-PUNCHME_HANDLER = DisableAbleCommandHandler("punchme", punchme, filters=Filters.group)
+KICKME_HANDLER = DisableAbleCommandHandler("kickme", kickme, filters=Filters.group)
 
 dispatcher.add_handler(BAN_HANDLER)
 dispatcher.add_handler(TEMPBAN_HANDLER)
 dispatcher.add_handler(PUNCH_HANDLER)
 dispatcher.add_handler(UNBAN_HANDLER)
 dispatcher.add_handler(ROAR_HANDLER)
-dispatcher.add_handler(PUNCHME_HANDLER)
+dispatcher.add_handler(KICKME_HANDLER)
 
 __mod_name__ = "Ban/Mute"
 __handlers__ = [
@@ -435,6 +435,5 @@ __handlers__ = [
     PUNCH_HANDLER,
     UNBAN_HANDLER,
     ROAR_HANDLER,
-    PUNCHME_HANDLER,
+    KICK_HANDLER,
 ]
-
