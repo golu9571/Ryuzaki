@@ -78,8 +78,7 @@ Heya! My name is *Ryuzaki*
 
 I am an Anime themed group management bot. I am also working in kira investigation :) 
  
-*I can make your group management fun and easy with
-my detective skill.*
+*I can make your group management fun and easy with my detective skill.*
 
 *Just click the button below to add me!*
 
