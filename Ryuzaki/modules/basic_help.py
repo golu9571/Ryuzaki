@@ -20,10 +20,9 @@ HELP_TEXT = """
 """
 
 btn =[
-    [Button.inline("Admin Help", data="admin_help"), Button.inline("Support", data="support_help")],
+    [Button.inline("Admin Help", data="admin_help"), Button.inline("Extra Help", data="extra_help")],
     [Button.inline("User Help", data="user_help"), Button.inline("Video Tutorial", data="v_tuts")],
-    [Button.inline("Extra Help", data="extra_help")],
-    [Button.inline("Back", data="Ryuzakibot_back")]]
+    [Button.inline("Back", data="Ryuzakibot_back"), Button.inline("Main Menu", data="help_back")]]
 
 @telethn.on(events.callbackquery.CallbackQuery(data="basic_help"))
 async def _(event):
@@ -121,15 +120,4 @@ async def _(event):
 
     await event.edit(EXTRA_TXT, buttons=[
     [Button.inline("Back", data="basic_help")]])
-
-S_TXT = """
-**Ryuzaki Support Sources**
-"""
-@telethn.on(events.callbackquery.CallbackQuery(data="support_help"))
-async def _(event):
-
-    await event.edit(S_TXT, buttons=[
-    [Button.inline("Channel", url=f"https://t.me/RyuzakiNews"), Button.inline("Channel", url=f"https://t.me/RyuzakiSupportChat")],
-    [Button.inline("Back", data="basic_help")]])
-
 
