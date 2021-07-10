@@ -4,6 +4,7 @@
 A modular Telegram Python bot running on python3 with a sqlalchemy database.
 
 ✨ Join Support Chat : [Support Chat](https://t.me/RyuzakiSupportChat)
+
 ✨ Join Update Channel : [Updates](https://t.me/RyuzakiNews)
 
 ## How to setup/deploy.
