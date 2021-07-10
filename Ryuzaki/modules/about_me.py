@@ -18,7 +18,7 @@ Report error/bugs here @RyuzakiSupportChat.
 @telethn.on(events.callbackquery.CallbackQuery(data="about_me"))
 async def _(event):
 
-     await event.edit(AB_TEXT, buttons=[
+     await event.edit(AB_TXT, buttons=[
      [Button.inline("T&C", data="tc"), Button.inline("Contributors", data="cb")],
      [Button.inline("Dev", data="dev"), Button.inline("About Me", data="ab")],
      [Button.inline("Back", data="RyuzakiBot_back")]])
@@ -44,3 +44,21 @@ Join @RyuzakiSupportChat to get answer of yours questions.**
 async def _(event):
 
      await event.edit(TC_TEXT, buttons=[[Button.inline("Back", data="about_me")]])
+
+#Contributors
+
+CS_TXT = """
+**Here Is The List Of The Contributiors :**
+
+**1. @EvilBinner [ OWNER ]
+2. @MaskedVirus 
+3. @Madboi_xD
+4. @GodDrick**
+"""
+
+telethn.on(events.callbackquery.CallbackQuery(data="cb"))
+async def _(event):
+
+     await event.edit(CS_TEXT, buttons=[[Button.inline("Back", data="about_me")]])
+
+
