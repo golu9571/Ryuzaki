@@ -7,12 +7,12 @@ from telethon.tl import functions, types
 from telethon.tl.types import *
 
 AB_TXT = """
-Ryuzaki bot - A bot to manage your groups with additional features
-Here's the about menu of Ryuzaki.
+**Ryuzaki bot - A bot to manage your groups with additional features
+Here's the about menu of Ryuzaki.**
 
-Almost all modules usage defined in the help menu, checkout by sending /help
+**Almost all modules usage defined in the help menu, checkout by sending /help**
 
-Report error/bugs here @RyuzakiSupportChat.
+**Report error/bugs here @RyuzakiSupportChat.**
 """
 
 @telethn.on(events.callbackquery.CallbackQuery(data="about_me"))
@@ -32,7 +32,7 @@ TC_TXT = """
 • No group ID or it's messages are stored, We respect everyone's privacy.
 • Don't spam commands, buttons, or anything in bot PM, if we found anyone doing than he will probhited to use Nidhi permanently.
 • Messages between Bot & you is only infront of your eyes and there is no backuse of it..
-• NSFW will get permanent global ban in Nidhi which never removes, report spammers here -> @RyuzakiSupportChat.
+• NSFW will get permanent global ban in Ryuzaki which never removes, report spammers here -> @RyuzakiSupportChat.
 
 NOTE: **Terms and Conditions will be change anytime.**
 
@@ -43,7 +43,7 @@ Join @RyuzakiSupportChat to get answer of yours questions.**
 @telethn.on(events.callbackquery.CallbackQuery(data="tc"))
 async def _(event):
 
-     await event.edit(TC_TEXT, buttons=[[Button.inline("Back", data="about_me")]])
+     await event.edit(TC_TXT, buttons=[[Button.inline("Back", data="about_me")]])
 
 #Contributors
 
@@ -59,6 +59,6 @@ CS_TXT = """
 telethn.on(events.callbackquery.CallbackQuery(data="cb"))
 async def _(event):
 
-     await event.edit(CS_TEXT, buttons=[[Button.inline("Back", data="about_me")]])
+     await event.edit(CS_TXT, buttons=[[Button.inline("Back", data="about_me")]])
 
 
