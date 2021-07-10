@@ -74,21 +74,21 @@ def get_readable_time(seconds: int) -> str:
 
 
 PM_START_TEXT = """
-✨ Hi I'm *Ryuzaki*,
-I am an Anime themed group management bot. I am also working in kira investigation ;)
+Heya! My name is **Ryuzaki**
+I am anime themed group management bot with **detective skills**:)
+ 
+**I can make your group management fun and easy with my detective skill.**
+Note : I Need Proper Admin Rights To Manage Group As Fuck! 
+==========================
+✨ **Updates Channel**
+- @RyuzakiNews
 
-*I can do a various of things, with my detective skills*:
-- *Restrict* users with ban permissions.
-- *Greet* users with media + text and buttons, with proper formatting.
-- Restrict users who flood your chat using my *anti-flood* module.
-- *Warn* users according to the options set and restrict em accordingly.
-- *Save notes* and filters with proper formatting and reply markup.
+✨ **Support Group**
+- @RyuzakiSupportChat
 
-Theres even more! this is just the tip of the mountain. *Do note I need
-to be promoted with proper admin permissions to function properly.*
-Else I won't be able to function as said.
+Wanna Add me to your Group? Just click the button below!
 
-**Click on help to learn more!**
+**Click on **Help Menu** to learn more!**
 """
 
 buttons = [
