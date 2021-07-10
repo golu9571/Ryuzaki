@@ -98,7 +98,7 @@ buttons = [
         InlineKeyboardButton(
             text="Updates", url=f"https://t.me/RyuzakiNews"),
         InlineKeyboardButton(
-            text="About", callback_data="about_me"),
+            text="Source", url=f"https://github.com/DopeBotz/Ryuzaki"),
     ],
 ]
 
