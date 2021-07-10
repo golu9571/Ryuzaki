@@ -129,8 +129,7 @@ S_TXT = """
 async def _(event):
 
     await event.edit(S_TXT, buttons=[
-    [Button.inline("Updates", url="https://t.me/RyuzakiNews"), Button.inline("Group", url="https://t.me/RyuzakiSupportChat")],
-    [Button.inline("Devs", url="https://t.me/EvilBinner")],
+    [Button.inline("Channel", url=f"https://t.me/RyuzakiNews"), Button.inline("Channel", url=f"https://t.me/RyuzakiSupportChat")],
     [Button.inline("Back", data="basic_help")]])
 
 
