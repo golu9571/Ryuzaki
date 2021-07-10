@@ -94,9 +94,9 @@ Else I won't be able to function as said.
 buttons = [
     [
         InlineKeyboardButton(
-            text="Add Ryuzaki", url="http://t.me/Ryuzakibot?startgroup=true"),
+            text="Add Ryuzaki", url="http://t.me/TheRyuzakibot?startgroup=true"),
         InlineKeyboardButton(
-            text="Basic Help", callback_data="basic_help"),
+            text="About", callback_data="about_me"),
     ],
     [
         InlineKeyboardButton(text="Support", url="https://t.me/RyuzakiSupportChat"),
@@ -106,6 +106,8 @@ buttons = [
     ],
     [
         InlineKeyboardButton(text="Help Menu", callback_data="help_back"),
+        InlineKeyboardButton(
+            text="Basic Help", callback_data="basic_help"),
     ],
 ]
 
