@@ -3,6 +3,9 @@
 
 A modular Telegram Python bot running on python3 with a sqlalchemy database.
 
+✨ ## Join Support Chat : [Support Chat](https://t.me/RyuzakiSupportChat)
+✨ ## Join Update Channel : [Updates](https://t.me/RyuzakiNews)
+
 ## How to setup/deploy.
 
 </details>  
@@ -173,8 +176,8 @@ For starters click on this button
 </details>  
 
 ## Credits
-The bot is based on the original work done by [PaulSonOfLars](https://github.com/PaulSonOfLars)
+The bot is based on the original work done by PaulSonOfLars
 
+## Owner 
+I am Developed By [EvilBinner](http://t.me/EvilBinner)
 
-
-## [OWNER](http://t.me/EvilBinner)
