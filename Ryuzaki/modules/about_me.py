@@ -43,7 +43,7 @@ NOTE: **Terms and Conditions will be change anytime.**
 Join @RyuzakiSupportChat to get answer of yours questions.**
 """
 
-@Stark.on(events.callbackquery.CallbackQuery(data="help"))
+@telethn.on(events.callbackquery.CallbackQuery(data="tc"))
 async def _(event):
 
      await event.edit(TC_TEXT, buttons=[[Button.inline("Back", data="about_me")]])
