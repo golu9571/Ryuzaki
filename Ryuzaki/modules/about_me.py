@@ -1,7 +1,6 @@
 import io
 from Ryuzaki.events import register
 from Ryuzaki import telethn
-from Ryuzaki import telethn
 from telethon import types
 from telethon import events, Button
 from telethon.tl import functions, types
@@ -46,4 +45,5 @@ Join @RyuzakiSupportChat to get answer of yours questions.**
 @telethn.on(events.callbackquery.CallbackQuery(data="tc"))
 async def _(event):
 
-     await event.edit(TC_TEXT, buttons=[[Button.inline("Back", data="about_me")]])
+     await event.edit(TC_TEXT, buttons=[[Button.inline("Back", data="about_me")]]
+
