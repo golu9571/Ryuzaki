@@ -7,6 +7,16 @@ A modular Telegram Python bot running on python3 with a sqlalchemy database.
 
 ✨ Join Update Channel : [Updates](https://t.me/RyuzakiNews)
 
+## Keywords
+PTB 
+Telegram Group Manager
+Python
+Pyrogram
+Telethon
+Telegram Group Manager
+Anime Themed Group Manager
+Anime
+
 ## How to setup/deploy.
 
 </details>  
