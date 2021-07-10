@@ -93,18 +93,18 @@ Else I won't be able to function as said.
 
 buttons = [
     [
-        InlineKeyboardButton(text="Support", url="https://t.me/RyuzakiSupportChat"),
-        InlineKeyboardButton(
-            text="Updates", url=f"https://t.me/RyuzakiNews"),
-        InlineKeyboardButton(
-            text="Updates", callback_data="about_me"),
-    ],
-    [
         InlineKeyboardButton(text="Help Menu", callback_data="help_back"),
         InlineKeyboardButton(
             text="Basic Help", callback_data="basic_help"),
         InlineKeyboardButton(
             text="Add Ryuzaki", url=f"http://t.me/TheRyuzakibot?startgroup=true"),
+    ],
+    [
+        InlineKeyboardButton(text="Support", url="https://t.me/RyuzakiSupportChat"),
+        InlineKeyboardButton(
+            text="Updates", url=f"https://t.me/RyuzakiNews"),
+        InlineKeyboardButton(
+            text="About", callback_data="about_me"),
     ],
 ]
 
