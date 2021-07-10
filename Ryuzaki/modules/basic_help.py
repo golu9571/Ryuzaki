@@ -20,7 +20,7 @@ HELP_TEXT = """
 """
 
 btn =[
-    [Button.inline("Admin Help", data="admin_help"), Button.inline("Bans", data="bans")],
+    [Button.inline("Admin Help", data="admin_help"), Button.inline("Support", data="support_help")],
     [Button.inline("User Help", data="user_help"), Button.inline("Video Tutorial", data="v_tuts")],
     [Button.inline("Extra Help", data="extra_help")],
     [Button.inline("Back", data="Ryuzakibot_back")]]
@@ -55,3 +55,33 @@ async def _(event):
     await event.edit(ADMIN_TXT, buttons=[
     [Button.inline("Back", data="basic_help")]])
 
+USER_TXT = """
+Here is the help for the **Users** module:
+
+ • /runs: reply a random string from an array of replies
+ • /slap: slap a user, or get slapped if not a reply
+ • /shrug: get shrug XD
+ • /table: get flip/unflip :v
+ • /decide: Randomly answers yes/no/maybe
+ • /toss: Tosses A coin
+ • /bluetext: check urself :V
+ • /roll: Roll a dice
+ • /rlg: Join ears,nose,mouth and create an emo ;-;
+ • /shout <keyword>: write anything you want to give loud shout
+ • /weebify <text>: returns a weebified text
+ • /sanitize: always use this before /pat or any contact
+ • /pat: pats a user, or get patted
+ • /8ball: predicts using 8ball method
+
+**This is only Basic Commands For Full Command List** - `/help memes`.
+
+**List May Update In Next Update.**
+
+**✨ Join Updates : @RyuzakiNews**
+"""
+
+@telethn.on(events.callbackquery.CallbackQuery(data="user_help"))
+async def _(event):
+
+    await event.edit(USER_TXT, buttons=[
+    [Button.inline("Back", data="basic_help")]])
