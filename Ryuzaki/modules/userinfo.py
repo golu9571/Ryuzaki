@@ -211,63 +211,59 @@ def gifid(update: Update, context: CallbackContext):
 
 
 @run_async
-def info(update: Update, context: CallbackContext):
-    bot, args = context.bot, context.args
-    message = update.effective_message
-    chat = update.effective_chat
+def info(bot: Bot, update: Update, args: List[str]):
+    msg = update.effective_message  # type: Optional[Message]
     user_id = extract_user(update.effective_message, args)
 
     if user_id:
         user = bot.get_chat(user_id)
 
-    elif not message.reply_to_message and not args:
-        user = message.from_user
+    elif not msg.reply_to_message and not args:
+        user = msg.from_user
 
-    elif not message.reply_to_message and (
-        not args
-        or (
-            len(args) >= 1
-            and not args[0].startswith("@")
-            and not args[0].isdigit()
-            and not message.parse_entities([MessageEntity.TEXT_MENTION])
-        )
-    ):
-        message.reply_text("I can't extract a user from this.")
+    elif not msg.reply_to_message and (not args or (
+            len(args) >= 1 and not args[0].startswith("@") and not args[0].isdigit() and not msg.parse_entities(
+        [MessageEntity.TEXT_MENTION]))):
+        msg.reply_text("I can't extract a user from this.")
         return
 
     else:
         return
 
-    text = (
-        f"<b> Extracted Info:</b> 」\n"
-        f"ID: <code>{user.id}</code>\n"
-        f"First Name: {html.escape(user.first_name)}"
-    )
+    text = "<b>User info</b>:" \
+           "\nID: <code>{}</code>" \
+           "\nFirst Name: {}".format(user.id, html.escape(user.first_name))
 
     if user.last_name:
-        text += f"\nLast Name: {html.escape(user.last_name)}"
+        text += "\nLast Name: {}".format(html.escape(user.last_name))
 
     if user.username:
-        text += f"\nUsername: @{html.escape(user.username)}"
+        text += "\nUsername: @{}".format(html.escape(user.username))
 
-    text += f"\nPermalink: {mention_html(user.id, 'link')}"
+    text += "\nPermanent user link: {}".format(mention_html(user.id, "link"))
 
-    if chat.type != "private" and user_id != bot.id:
-        _stext = "\nPresence: <code>{}</code>"
-
-        afk_st = is_afk(user.id)
-        if afk_st:
-            text += _stext.format("AFK")
+    if user.id == OWNER_ID:
+        text += "\n\nThis person is my owner - I would never do anything against them!"
+    else:
+        if user.id in SUDO_USERS:
+            text += "\nThis person is one of my sudo users! " \
+                    "Nearly as powerful as my owner - so watch it."
         else:
-            status = status = bot.get_chat_member(chat.id, user.id).status
-            if status:
-                if status in {"left", "kicked"}:
-                    text += _stext.format("Not here")
-                elif status == "member":
-                    text += _stext.format("Detected")
-                elif status in {"administrator", "creator"}:
-                    text += _stext.format("Admin")
-    rep.delete()
+            if user.id in SUPPORT_USERS:
+                text += "\nThis person is one of my support users! " \
+                        "Not quite a sudo user, but can still gban you off the map."
+
+            if user.id in WHITELIST_USERS:
+                text += "\nThis person has been whitelisted! " \
+                        "That means I'm not allowed to ban/kick them."
+
+    for mod in USER_INFO:
+        mod_info = mod.__user_info__(user.id).strip()
+        if mod_info:
+            text += "\n\n" + mod_info
+
+    update.effective_message.reply_text(text, parse_mode=ParseMode.HTML)
+
 
 
 @run_async
