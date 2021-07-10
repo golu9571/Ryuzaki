@@ -90,8 +90,8 @@ V_TXT = """
 
 **Click Here To See :** [Watch](https://t.me/RyuzakiNews/4)
 
-_More Video tutorial regarding My use will updated soon
-Report bugs & for more tutorials, Ask__ [here](https://EvilBinner)
+**More Video tutorial regarding My use will updated soon
+Report bugs & for more tutorials, Ask** [here](https://EvilBinner)
 """
 
 @telethn.on(events.callbackquery.CallbackQuery(data="v_tuts"))
@@ -101,7 +101,7 @@ async def _(event):
     [Button.inline("Back", data="basic_help")]])
 
 EXTRA_TXT = """
-Get information about anime, manga or characters from [AniList](anilist.co).
+Get information about anime, manga or characters from AniList
 
 *Available commands:*
  • `/anime <anime>`: returns information about the anime.
@@ -109,8 +109,8 @@ Get information about anime, manga or characters from [AniList](anilist.co).
  • `/manga <manga>`: returns information about the manga.
  • `/user <user>`: returns information about a MyAnimeList user.
  • `/upcoming`: returns a list of new anime in the upcoming seasons.
- • `/kaizoku <anime>`: search an anime on animekaizoku.com
- • `/kayo <anime>`: search an anime on animekayo.com
+ • `/kaizoku <anime>`: search an anime on animekaizoku
+ • `/kayo <anime>`: search an anime on animekayo
  • `/airing <anime>`: returns anime airing info.
  • /whatanime - reply to gif or video
 """
