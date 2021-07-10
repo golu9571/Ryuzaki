@@ -96,8 +96,7 @@ buttons = [
         InlineKeyboardButton(
             text="Add Ryuzaki", url="http://t.me/Ryuzakibot?startgroup=true"),
         InlineKeyboardButton(
-            text="Basic Help", callback_data="basic_help"
-        ),
+            text="Basic Help", callback_data="basic_help"),
     ],
     [
         InlineKeyboardButton(text="Support", url="https://t.me/RyuzakiSupportChat"),
