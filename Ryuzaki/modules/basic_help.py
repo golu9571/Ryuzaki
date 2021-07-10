@@ -93,3 +93,44 @@ V_TXT = """
 
 _More Video tutorial regarding My use will updated soon
 Report bugs & for more tutorials, Ask__ [here](https://EvilBinner)
+"""
+
+@telethn.on(events.callbackquery.CallbackQuery(data="v_tuts"))
+async def _(event):
+
+    await event.edit(V_TXT, buttons=[
+    [Button.inline("Back", data="basic_help")]])
+
+EXTRA_TXT = """
+Get information about anime, manga or characters from [AniList](anilist.co).
+
+*Available commands:*
+ • `/anime <anime>`: returns information about the anime.
+ • `/character <character>`: returns information about the character.
+ • `/manga <manga>`: returns information about the manga.
+ • `/user <user>`: returns information about a MyAnimeList user.
+ • `/upcoming`: returns a list of new anime in the upcoming seasons.
+ • `/kaizoku <anime>`: search an anime on animekaizoku.com
+ • `/kayo <anime>`: search an anime on animekayo.com
+ • `/airing <anime>`: returns anime airing info.
+ • /whatanime - reply to gif or video
+"""
+
+@telethn.on(events.callbackquery.CallbackQuery(data="extra_help"))
+async def _(event):
+
+    await event.edit(EXTRA_TXT, buttons=[
+    [Button.inline("Back", data="basic_help")]])
+
+S_TXT = """
+**Ryuzaki Support Sources**
+"""
+@telethn.on(events.callbackquery.CallbackQuery(data="support_help"))
+async def _(event):
+
+    await event.edit(S_TXT, buttons=[
+    [Button.inline("Updates", url="https://t.me/RyuzakiNews"), Button.inline("Group", url="https://t.me/RyuzakiSupportChat")],
+    [Button.inline("Devs", url="https://t.me/EvilBinner")],
+    [Button.inline("Back", data="basic_help")]])
+
+
