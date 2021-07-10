@@ -19,8 +19,8 @@ Here's the about menu of Ryuzaki.**
 async def _(event):
 
      await event.edit(AB_TXT, buttons=[
-     [Button.inline("T&C", data="tc"), Button.inline("Contributors", data="cb")],
-     [Button.inline("Dev", data="dev"), Button.inline("About Me", data="ab")],
+     [Button.inline("T&C", data="tc"), Button.inline("System", data="sys")],
+     [Button.inline("About Me", data="ab")],
      [Button.inline("Back", data="RyuzakiBot_back")]])
 
 #T&C
@@ -47,18 +47,20 @@ async def _(event):
 
 #Contributors
 
-CS_TXT = """
-**Here Is The List Of The Contributiors :**
+SYS_TXT = """
+**Here Is The Details About System :**
 
-**1. @EvilBinner [ OWNER ]
-2. @MaskedVirus 
-3. @Madboi_xD
-4. @GodDrick**
+**× Written In : Pyrogram, Telethon, PTB
+× Alive Since : July/09/2021
+× Hosted On : Heroku
+× Database : SQL, Redis, Mongo
+× Chats Under Me : 8
+× Developed By @EvilBinner**
 """
 
-telethn.on(events.callbackquery.CallbackQuery(data="cb"))
+@telethn.on(events.callbackquery.CallbackQuery(data="sys"))
 async def _(event):
 
-     await event.edit(CS_TXT, buttons=[[Button.inline("Back", data="about_me")]])
+     await event.edit(SYS_TXT, buttons=[[Button.inline("Back", data="about_me")]])
 
 
