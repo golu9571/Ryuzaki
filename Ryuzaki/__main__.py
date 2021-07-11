@@ -91,14 +91,14 @@ buttons = [
         InlineKeyboardButton(
             text="Basic Help", callback_data="basic_help"),
         InlineKeyboardButton(
-            text="Add Ryuzaki", url=f"http://t.me/TheRyuzakibot?startgroup=true"),
+            text="Add Ryuzaki", url=f"http://t.me/temariop_bot?startgroup=true"),
     ],
     [
-        InlineKeyboardButton(text="Support", url="https://t.me/RyuzakiSupportChat"),
+        InlineKeyboardButton(text="Support", url="https://t.me/temari_news"),
         InlineKeyboardButton(
-            text="Updates", url=f"https://t.me/RyuzakiNews"),
+            text="Updates", url=f"https://t.me/temari_News"),
         InlineKeyboardButton(
-            text="Source", url=f"https://github.com/DopeBotz/Ryuzaki"),
+            text="Creator", url=f"https://t.me/arroww_xd"),
     ],
 ]
 
@@ -109,13 +109,13 @@ Here is the list of *all possible commands*:
 - /help: Sends this message; I'll tell you more about myself!
 - /donate: Gives you info on how to support me and my creator.
 
-If you have any bugs or questions on how to use me head to @TheRyuzakiBot.
+If you have any bugs or questions on how to use me head to @temariop_bot.
 *All commands can be used with the following: / ? !*
 """
 
 
 DONATE_STRING = """Heya, glad to hear you want to donate!
- You can support the project via [Paypal](#) or by contacting @EvilBinner\
+ You can support the project via [Paypal](#) or by contacting @arroww_xd\
  Supporting isnt always financial! \
  Those who cannot provide monetary support are welcome to help us develop the bot at ."""
 
@@ -362,7 +362,7 @@ def Ryuzakibot_about_callback(update, context):
     query = update.callback_query
     if query.data == "Ryuzakibot_":
         query.message.edit_text(
-            text=""" ℹ️ I'm *Ryuzaki*, a powerful group management bot built to help you manage your group easily.
+            text=""" ℹ️ I'm *TEMARI*, a powerful group management bot built to help you manage your group easily.
                  \n❍ I can restrict users.
                  \n❍ I can greet users with customizable welcome messages and even set a group's rules.
                  \n❍ I have an advanced anti-flood system.
@@ -370,7 +370,7 @@ def Ryuzakibot_about_callback(update, context):
                  \n❍ I have a note keeping system, blacklists, and even predetermined replies on certain keywords.
                  \n❍ I check for admins' permissions before executing any command and more stuffs
                  \n\n_Ryuzakibot's licensed under the GNU General Public License v3.0_
-                 \nHere is the [💞Repository](https://github.com/TeamRyuzaki/Ryuzakibot).
+                 \nHere is the [💞Repository](https://t.me/temari_news).
                  \n\nIf you have any question about Ryuzakibot, let us know at .""",
             parse_mode=ParseMode.MARKDOWN,
             disable_web_page_preview=True,
